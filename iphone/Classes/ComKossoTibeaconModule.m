@@ -3,12 +3,7 @@
  *
  * Created by Kosso
  * Copyright (c) 2017
- 
- 
- // TODO: set major/minor/power and beacon id etc.
- // Events.
- 
- */
+*/
 
 #import "ComKossoTibeaconModule.h"
 #import "TiBase.h"
@@ -17,16 +12,12 @@
 
 @implementation ComKossoTibeaconModule
 
-//@synthesize major;
-//@synthesize minor;
-    
     
 #pragma mark Internal
 
 // this is generated for your module, please do not change it
 -(id)moduleGUID
 {
-
     // This will also be the default GUID of the advertising beacon
     return @"d186a5d9-7f48-42d0-81ad-fb1a31f81d3c";
 }
@@ -41,8 +32,6 @@
 
 -(void)startup
 {
-	// this method is called when the module is first loaded
-	// you *must* call the superclass
 	[super startup];
 
 	NSLog(@"[INFO] %@ loaded",self);
@@ -156,19 +145,17 @@
     _args = [args objectAtIndex:0];
     
     if(_args != nil){
-        NSLog(@"[INFO] args dict : %@", _args);
+        //NSLog(@"[INFO] args dict : %@", _args);
         id _minor = [_args objectForKey:@"minor"];
         if(_minor){
             minor = [[TiUtils numberFromObject:_minor] integerValue];
-            
-            NSLog(@"[INFO] arg MINOR : %d", minor);
+            //NSLog(@"[INFO] arg MINOR : %d", minor);
         }
         id _major = [_args objectForKey:@"major"];
         if(_major){
             major = [[TiUtils numberFromObject:_major] integerValue];
-            NSLog(@"[INFO] arg MAJOR : %d", major);
+            //NSLog(@"[INFO] arg MAJOR : %d", major);
         }
-
     }
 
     // Default 0 and 0  Set in startup
@@ -187,14 +174,11 @@
 -(void)setMinor:(id)arg
 {
     minor = [TiUtils intValue:arg def:0];
-    //NSLog(@"[INFO] set minor to : %d", minor);
 }
 
 -(void)setMajor:(id)arg
 {
     major = [TiUtils intValue:arg def:0];
-    //NSLog(@"[INFO] set major to : %d", major);
-
 }
 
 

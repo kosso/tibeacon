@@ -13,9 +13,8 @@
 static int broadcastpower = -59;
 
 
-@interface ComKossoTibeaconModule : TiModule <CLLocationManagerDelegate,CBPeripheralManagerDelegate>
+@interface ComKossoTibeaconModule : TiModule <CBPeripheralManagerDelegate>
 {
-    CLLocationManager *_locationManager;
     NSUUID *_uuid;
     NSNumber *_power;
     CLBeaconRegion *region;
