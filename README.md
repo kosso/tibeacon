@@ -10,6 +10,7 @@ See /example/app.js for a full test app with adjustable major/minor values.
 
 
 
+
 REGISTER THE MODULE
 --------------------
 
@@ -38,23 +39,26 @@ USING THE MODULE
 -------------------------
 
 	var tibeacon = require('com.kosso.tibeacon');
-	
+
 	// Methods
-	
-	tibeacon.isAdvertising();
-	
+
+	tibeacon.isAdvertising(); // boolean
+
 	tibeacon.startAdvertising();
+
+	// major.minor range is 0 - 65535
+	tibeacon.minor = 4;
+	tibeacon.major = 10;
+	tibeacon.setMajor(1); 
+	tibeacon.setMinor(10);
 	
 	tibeacon.startAdvertising({
 	  major:1,
 	  minor:6
 	});
 	
-	tibeacon.setMajor(1);  // 0 - 65535
-	tibeacon.setMinor(10); // 0 - 65535
-	
 	tibeacon.stopAdvertising();
-	
+
 
 
 
@@ -63,7 +67,6 @@ USING THE MODULE
 - Set custom GUID. (Currently uses the module's one).
 - Set power. 
 - .. get this added to other modules that don't support advertising ;) 
-
 
 
 
