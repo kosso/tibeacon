@@ -57,10 +57,20 @@ scroller.add(value_major)
 
 slider_major.addEventListener('change', function(e){
   value_major.text ='major: ' + Math.round(e.value); 
-
-  tibeacon.major = Math.round(e.value);
-
 });
+
+slider_major.addEventListener('stop', function(e){
+  value_major.text ='major: ' + Math.round(e.value); 
+  if(tibeacon.isAdvertising()){
+    tibeacon.updateMajorMinor({
+      major:Math.round(e.value),
+      minor:Math.round(slider_minor.value)
+    });
+  } else {
+    tibeacon.major = Math.round(e.value);
+  }
+});
+
 
 
 var slider_minor = Titanium.UI.createSlider({
@@ -85,9 +95,17 @@ scroller.add(value_minor)
 
 slider_minor.addEventListener('change', function(e){
   value_minor.text = 'minor: '+Math.round(e.value); 
-
-  tibeacon.minor = Math.round(e.value);
-
+});
+slider_minor.addEventListener('stop', function(e){
+  value_minor.text ='minor: ' + Math.round(e.value); 
+  if(tibeacon.isAdvertising()){
+    tibeacon.updateMajorMinor({
+      minor:Math.round(e.value),
+      major:Math.round(slider_major.value)
+    });
+  } else {
+    tibeacon.minor = Math.round(e.value);
+  }
 });
 
 
@@ -119,11 +137,13 @@ function guid() {
 
 btn_beacon.addEventListener('click', function(e){
 
-  console.log('beacon:  isAdvertising: ' + tibeacon.isAdvertising());
+  //console.log('beacon:  isAdvertising: ' + tibeacon.isAdvertising());
 
   if(!tibeacon.isAdvertising()){
     
     //tibeacon.startAdvertising();
+
+    console.log('beacon: startAdvertising');
     
     tibeacon.startAdvertising({
       minor:Math.round(slider_minor.value),
@@ -135,15 +155,18 @@ btn_beacon.addEventListener('click', function(e){
 
     btn_beacon.title = 'stop beacon';
 
-    slider_minor.enabled = false;
-    slider_major.enabled = false;
+    //slider_minor.enabled = false;
+    //slider_major.enabled = false;
 
   } else {
+
+    console.log('beacon: stopAdvertising');
+
     tibeacon.stopAdvertising();
     btn_beacon.title = 'start beacon';
 
-    slider_minor.enabled = true;
-    slider_major.enabled = true;
+    //slider_minor.enabled = true;
+    //slider_major.enabled = true;
 
   }
 

@@ -136,9 +136,43 @@
     return advertisingOn;
 }
 
+-(void)updateMajorMinor:(id)args{
+    // This can only be done while the beacon is running. Best to not change the UUID though.
+    NSDictionary *_args = nil;
+    _args = [args objectAtIndex:0];
+    if(_args != nil){
+        id _minor = [_args objectForKey:@"minor"];
+        if(_minor){
+            minor = [[TiUtils numberFromObject:_minor] integerValue];
+        }
+        id _major = [_args objectForKey:@"major"];
+        if(_major){
+            major = [[TiUtils numberFromObject:_major] integerValue];
+        }
+        
+        if(_peripheralManager && _peripheralManager.state == CBPeripheralManagerStatePoweredOn){
+            if(advertisingOn){
+                [_peripheralManager stopAdvertising];
+            }
+            _power = @(broadcastpower); // in .h
+            CLBeaconRegion *newregion = [[CLBeaconRegion alloc] initWithProximityUUID:_uuid major:(uint16_t)major minor:(uint16_t)minor identifier:indentifier];
+            NSMutableDictionary *peripheralData = [newregion peripheralDataWithMeasuredPower:_power];
+            
+            NSLog(@"[INFO] Re-starting advertising: %@",peripheralData);
+            NSLog(@"[INFO] Major: %d - Minor: %d", major, minor);
+            
+            [_peripheralManager startAdvertising:peripheralData];
+        } else {
+            NSLog(@"[INFO] No Peripheral manager?");
+        }
+        
+    }
+   
+    
+}
+
 -(void)stopAdvertising:(id)args
 {
-    NSLog(@"[INFO] Stopping advertising");
     if(_peripheralManager) {
         advertisingOn = NO;
         [_peripheralManager stopAdvertising];
@@ -147,9 +181,6 @@
     
 -(void)startAdvertising:(id)args
 {
-    //if(!_peripheralManager) {
-    //    [self initialise:nil];
-    //}
     _uuid = [[NSUUID alloc] initWithUUIDString:uuid]; // Uses the module GUID by default.
     _power = @(broadcastpower); // in .h
     
