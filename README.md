@@ -53,8 +53,8 @@ USING THE MODULE
 	tibeacon.setMajor(1); 
 	tibeacon.setMinor(10);
 	tibeacon.setUuid('12345678-abcd-88cc-1111aaaa2222');
-	
-	
+
+
 	tibeacon.startAdvertising({
 	  identifier:'TestBeacon',
 	  uuid:'ffffffff-ffff-ffff-ffff-ffffffffffff',
@@ -63,6 +63,12 @@ USING THE MODULE
 	});
 	
 	tibeacon.stopAdvertising();
+	
+	// While the beacon is advertising, you can update the major/minor values using:
+	tibeacon.updateMajorMinor({
+	  major:10,
+	  minor:3042
+	});
 
 
 
