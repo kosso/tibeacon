@@ -106,19 +106,32 @@ var btn_beacon = Ti.UI.createButton({
   tintColor:'#3572bd',
   title:'start beacon'
 });
+
+function guid() {
+  function s4() {
+    return Math.floor((1 + Math.random()) * 0x10000)
+      .toString(16)
+      .substring(1);
+  }
+  return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+    s4() + '-' + s4() + s4() + s4();
+}
+
 btn_beacon.addEventListener('click', function(e){
 
   console.log('beacon:  isAdvertising: ' + tibeacon.isAdvertising());
 
   if(!tibeacon.isAdvertising()){
     
-    tibeacon.startAdvertising();
-    /*
+    //tibeacon.startAdvertising();
+    
     tibeacon.startAdvertising({
       minor:Math.round(slider_minor.value),
-      major:Math.round(slider_major.value)
+      major:Math.round(slider_major.value),
+      uuid:'ffffffff-ffff-ffff-ffff-ffffffffffff',
+      identifier:'TestBeacon'
     });
-*/
+
 
     btn_beacon.title = 'stop beacon';
 
