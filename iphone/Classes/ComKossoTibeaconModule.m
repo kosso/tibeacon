@@ -38,7 +38,8 @@
     
     minor = 0;
     major = 0;
-    
+    uuid = [self moduleGUID];
+    indentifier = [self moduleId];
 }
 
 -(void)shutdown:(id)sender
@@ -100,9 +101,11 @@
 
 -(void)initialise:(id)args
 {
+    NSLog(@"[INFO] initialise Bluetooth");
     [self checkPermissions];
-    if(_peripheralManager) {
-        [self stopAdvertising:nil];
+    [self stopAdvertising:nil];
+    if(_peripheralManager){
+        [_peripheralManager release];
     }
     _peripheralManager = [[CBPeripheralManager alloc] initWithDelegate:self queue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)];
 
@@ -111,7 +114,16 @@
 -(void)peripheralManagerDidUpdateState:(CBPeripheralManager *)peripheral
 {
     if(peripheral.state == CBPeripheralManagerStatePoweredOn && advertisingOn) {
-        [self startAdvertising:nil];
+        
+        NSLog(@"[INFO] Bluetooth Powered On ");
+        
+        _power = @(broadcastpower); // in .h
+
+        CLBeaconRegion *newregion = [[CLBeaconRegion alloc] initWithProximityUUID:_uuid major:(uint16_t)major minor:(uint16_t)minor identifier:indentifier];
+        NSMutableDictionary *peripheralData = [newregion peripheralDataWithMeasuredPower:_power];
+        NSLog(@"[INFO] Starting advertising: %@",peripheralData);
+        NSLog(@"[INFO] Major: %d - Minor: %d", major, minor);
+        [_peripheralManager startAdvertising:peripheralData];
     }
 }
 
@@ -119,6 +131,8 @@
     
 -(BOOL)isAdvertising:(id)args
 {
+    // return [_peripheralManager isAdvertising];
+
     return advertisingOn;
 }
 
@@ -133,11 +147,10 @@
     
 -(void)startAdvertising:(id)args
 {
-    [self checkPermissions];
-    if(!_peripheralManager) {
-        [self initialise:nil];
-    }
-    _uuid = [[NSUUID alloc] initWithUUIDString:[self moduleGUID]]; // Using the module GUID for now..
+    //if(!_peripheralManager) {
+    //    [self initialise:nil];
+    //}
+    _uuid = [[NSUUID alloc] initWithUUIDString:uuid]; // Uses the module GUID by default.
     _power = @(broadcastpower); // in .h
     
     NSDictionary *_args = nil;
@@ -149,26 +162,34 @@
         id _minor = [_args objectForKey:@"minor"];
         if(_minor){
             minor = [[TiUtils numberFromObject:_minor] integerValue];
-            //NSLog(@"[INFO] arg MINOR : %d", minor);
         }
         id _major = [_args objectForKey:@"major"];
         if(_major){
             major = [[TiUtils numberFromObject:_major] integerValue];
-            //NSLog(@"[INFO] arg MAJOR : %d", major);
+        }
+        id _identifier = [_args objectForKey:@"identifier"];
+        if(_identifier){
+            indentifier = [TiUtils stringValue:_identifier];
+        }
+        id _newuuid = [_args objectForKey:@"uuid"];
+        if(_newuuid){
+            [_uuid release];
+            _uuid = [[NSUUID alloc] initWithUUIDString:[TiUtils stringValue:_newuuid]];
         }
     }
-
-    // Default 0 and 0  Set in startup
-    NSLog(@"[INFO] Major: %d - Minor: %d", major, minor);
-    
-    CLBeaconRegion *newregion = [[CLBeaconRegion alloc] initWithProximityUUID:_uuid major:(uint16_t)major minor:(uint16_t)minor identifier:[self moduleId]];
-    NSMutableDictionary *peripheralData = [newregion peripheralDataWithMeasuredPower:_power];
-
-    NSLog(@"[INFO] Starting advertising: %@",peripheralData);
     
     advertisingOn = YES;
-    [_peripheralManager startAdvertising:peripheralData];
+    if(_peripheralManager && _peripheralManager.state == CBPeripheralManagerStatePoweredOn){
+        CLBeaconRegion *newregion = [[CLBeaconRegion alloc] initWithProximityUUID:_uuid major:(uint16_t)major minor:(uint16_t)minor identifier:indentifier];
+        NSMutableDictionary *peripheralData = [newregion peripheralDataWithMeasuredPower:_power];
     
+        NSLog(@"[INFO] Power is already on.. Starting advertising: %@",peripheralData);
+        NSLog(@"[INFO] Major: %d - Minor: %d", major, minor);
+        [_peripheralManager startAdvertising:peripheralData];
+    } else {
+        [self initialise:nil];
+        // Will start when powered up
+    }
 }
 
 -(void)setMinor:(id)arg
@@ -179,6 +200,17 @@
 -(void)setMajor:(id)arg
 {
     major = [TiUtils intValue:arg def:0];
+}
+
+-(void)setIdentifier:(id)arg
+{
+    ENSURE_SINGLE_ARG(arg, NSString);
+    indentifier = [TiUtils stringValue:arg];
+}
+-(void)setUuid:(id)arg
+{
+    ENSURE_SINGLE_ARG(arg, NSString);
+    uuid = [TiUtils stringValue:arg];
 }
 
 

@@ -22,7 +22,8 @@ static int broadcastpower = -59;
     BOOL advertisingOn;
     NSInteger major;
     NSInteger minor;
-    
+    NSString *indentifier;
+    NSString *uuid;
 }
     
 @end

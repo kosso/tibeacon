@@ -19,7 +19,7 @@ Register the module with your application by editing `tiapp.xml` and adding:
 	<module platform="iphone">com.kosso.tibeacon</module>
 ### IMPORTANT
 
-**DONT FORGET: Add the Bluetooth usage description to tiapp.xml in the <ios> section!! **
+##### DONT FORGET: Add the Bluetooth usage description to tiapp.xml in the <ios> section!! 
 
 **Or you will crash. Hard.** 
 
@@ -44,17 +44,22 @@ USING THE MODULE
 
 	tibeacon.isAdvertising(); // boolean
 
-	tibeacon.startAdvertising();
+	tibeacon.startAdvertising(); // defaults: major:0, minor:0, uuid:moduleGUID, identifier:moduleID 
 
 	// major.minor range is 0 - 65535
+	// Will not set until next started if already advertising
 	tibeacon.minor = 4;
 	tibeacon.major = 10;
 	tibeacon.setMajor(1); 
 	tibeacon.setMinor(10);
+	tibeacon.setUuid('12345678-abcd-88cc-1111aaaa2222');
+	
 	
 	tibeacon.startAdvertising({
+	  identifier:'TestBeacon',
+	  uuid:'ffffffff-ffff-ffff-ffff-ffffffffffff',
 	  major:1,
-	  minor:6
+	  minor:60
 	});
 	
 	tibeacon.stopAdvertising();
