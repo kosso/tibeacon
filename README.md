@@ -2,7 +2,7 @@
 tibeacon
 ===========================================
 
-A *very* quick and dirty iOS Titanium module to make your app advertise an an iBeacon. 
+A *very* quick and dirty iOS Titanium module to make your app advertise an iBeacon. 
 
 
 
